@@ -53,7 +53,7 @@ spec:
 
       source:
         repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
-        targetRevision: feat/dl-init
+        targetRevision: feat/irfan-init
         path: "{{ .path.path }}"
         # ArgoCD auto-detects kustomize (kustomization.yaml present)
         # or Helm (Chart.yaml present) — no explicit config needed
