@@ -62,9 +62,9 @@ spec:
         namespace: "{{destNamespace}}"
 
       syncPolicy:
-        # automated:
-        #   prune: false       # never auto-delete operator namespaces or CRDs
-        #   selfHeal: true
+        automated:
+           prune: false       # never auto-delete operator namespaces or CRDs
+           selfHeal: true
         allowEmpty: true
         syncOptions:
           - CreateNamespace=true
