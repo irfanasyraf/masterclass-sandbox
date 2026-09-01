@@ -22,7 +22,7 @@ spec:
     namespace: openshift-gitops
   project: default
   source:
-    repoURL: https://github.com/dariuslwh95/masterclass-sandbox.git
+    repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
     path: argocd/
     targetRevision: feat/dl-init
   syncPolicy:

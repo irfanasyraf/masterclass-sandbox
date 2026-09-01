@@ -8,7 +8,7 @@ spec:
 
   sourceRepos:
     # Main cluster configuration repo
-    - https://github.com/dariuslwh95/masterclass-sandbox.git
+    - https://github.com/irfanasyraf/masterclass-sandbox.git
 
   destinations:
     - server: https://kubernetes.default.svc
