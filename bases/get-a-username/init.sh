@@ -7,7 +7,7 @@ USER_COUNT=10
 # Set this locally before running — do NOT push a real password back to git.
 # This is the one value in this file you're expected to edit on your machine
 # and never commit; everything ArgoCD deploys only ever sees placeholders.
-WORKSHOP_PASSWORD="CHANGE_ME_BEFORE_RUNNING"
+WORKSHOP_PASSWORD="dry-run"
 
 if [[ "${WORKSHOP_PASSWORD}" == "CHANGE_ME_BEFORE_RUNNING" ]]; then
     echo "ERROR: edit WORKSHOP_PASSWORD at the top of this script before running it." >&2
@@ -37,19 +37,37 @@ create_workshop_auth() {
         --from-file=htpasswd="${htpasswd_file}" \
         --dry-run=client -o yaml | oc apply -f -
 
-    echo "Adding ${HTPASSWD_IDP_NAME} to oauth/cluster identity providers (preserving any others)..."
+    echo "Fetching current identity providers from cluster..."
+    local current_oauth
+    current_oauth="$(oc get oauth cluster -o json 2>/dev/null)"
+
+    # Safety check: Ensure cluster returned valid JSON with a spec block
+    if [ -z "${current_oauth}" ]; then
+        echo "ERROR: Failed to fetch oauth/cluster resources. Aborting patch to protect existing auth." >&2
+        return 1
+    fi
+
+    # Build the workshop provider JSON object
+    local workshop_provider
+    workshop_provider="$(jq -n \
+        --arg name "${HTPASSWD_IDP_NAME}" \
+        --arg secret "${HTPASSWD_SECRET_NAME}" \
+        '{
+            name: $name,
+            mappingMethod: "claim",
+            type: "HTPasswd",
+            htpasswd: { fileData: { name: $secret } }
+        }')"
+
+    echo "Merging ${HTPASSWD_IDP_NAME} into oauth/cluster identity providers..."
     local merged_providers
-    merged_providers="$(oc get oauth cluster -o json \
-        | jq --arg name "${HTPASSWD_IDP_NAME}" --arg secret "${HTPASSWD_SECRET_NAME}" '
-            (.spec.identityProviders // [])
-            | map(select(.name != $name))
-            + [{
-                name: $name,
-                mappingMethod: "claim",
-                type: "HTPasswd",
-                htpasswd: { fileData: { name: $secret } }
-              }]
-          ')"
+    merged_providers="$(echo "${current_oauth}" | jq --argjson new_provider "${workshop_provider}" '
+        (.spec.identityProviders // [])
+        | map(select(.name != $new_provider.name))
+        + [$new_provider]
+    ')"
+
+    # Apply the merged provider list
     oc patch oauth cluster --type=merge -p "$(jq -n --argjson providers "${merged_providers}" '{spec: {identityProviders: $providers}}')"
 
     if ! oc get secret "${GET_A_USERNAME_SECRET_NAME}" -n "${GET_A_USERNAME_SECRET_NAMESPACE}" &>/dev/null; then

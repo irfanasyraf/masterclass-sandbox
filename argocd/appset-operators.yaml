@@ -15,8 +15,6 @@ kind: ApplicationSet
 metadata:
   name: openshift4-operators
   namespace: openshift-gitops
-  labels:
-    sync-test: "true"
 spec:
   syncPolicy:
     preserveResourcesOnDeletion: false
@@ -50,8 +48,8 @@ spec:
       project: openshift4-community
 
       source:
-        repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
-        targetRevision: feat/irfan-init
+        repoURL: https://github.com/dariuslwh95/masterclass-sandbox.git
+        targetRevision: feat/dl-init
         path: "{{path}}"
         helm:
           valueFiles:
@@ -63,8 +61,8 @@ spec:
 
       syncPolicy:
         automated:
-           prune: false       # never auto-delete operator namespaces or CRDs
-           selfHeal: true
+          prune: false       # never auto-delete operator namespaces or CRDs
+          selfHeal: true
         allowEmpty: true
         syncOptions:
           - CreateNamespace=true

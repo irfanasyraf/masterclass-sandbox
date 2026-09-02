@@ -673,6 +673,6 @@ gpuOperator:
 # regeneration one-liner.
 # ------------------------------------------------------------------------------
 workshopAuth:
-  enabled: true
+  enabled: false
   identityProviderName: workshop-htpasswd
   secretName: workshop-htpasswd
