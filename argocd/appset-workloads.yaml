@@ -29,7 +29,8 @@ spec:
   generators:
     - git:
         repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
-        revision: main
+#        revision: main
+        revision: feat/irfan-init 
         directories:
           # Each subdirectory here becomes one ArgoCD Application.
           # Add new workloads by creating overlay/my-sno-cluster/<name>/kustomization.yaml
