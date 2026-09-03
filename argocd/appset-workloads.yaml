@@ -28,7 +28,7 @@ spec:
 
   generators:
     - git:
-        repoURL: https://github.com/dariuslwh95/masterclass-sandbox.git
+        repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
         revision: main
         directories:
           # Each subdirectory here becomes one ArgoCD Application.
@@ -52,8 +52,8 @@ spec:
       project: openshift4-community
 
       source:
-        repoURL: https://github.com/dariuslwh95/masterclass-sandbox.git
-        targetRevision: feat/dl-init
+        repoURL: https://github.com/irfanasyraf/masterclass-sandbox.git
+        targetRevision: feat/irfan-init
         path: "{{ .path.path }}"
         # ArgoCD auto-detects kustomize (kustomization.yaml present)
         # or Helm (Chart.yaml present) — no explicit config needed
@@ -66,8 +66,8 @@ spec:
 
       syncPolicy:
         automated:
-          # prune: true
-          # selfHeal: true
+          prune: true
+          selfHeal: true
         allowEmpty: true
         syncOptions:
           - CreateNamespace=true
